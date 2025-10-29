@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Game 1 - Responsive Rive</title>
+  <title>Game 1 - Rive</title>
 
-  <!-- Rive Web Player -->
+  <!-- Rive Web Player (Canvas runtime) -->
   <script src="https://unpkg.com/@rive-app/canvas@2.17.3"></script>
 
   <style>
@@ -16,93 +16,88 @@
       background: #000;
       overflow: hidden;
     }
-
     canvas {
       display: block;
       width: 100vw;
       height: 100vh;
-      position: relative;
-      z-index: 1;
     }
-
-    .return-button {
+    .hint {
       position: fixed;
-      top: 20px;
-      left: 20px;
-      background: rgba(255, 255, 255, 0.8);
-      border: none;
-      border-radius: 8px;
-      padding: 10px 16px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s ease, transform 0.2s ease;
-      z-index: 10;
-    }
-
-    .return-button:hover {
-      background: white;
-      transform: scale(1.05);
+      left: 12px;
+      bottom: 12px;
+      color: #bbb;
+      font: 12px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      user-select: none;
     }
   </style>
 </head>
 <body>
-  <button class="return-button" onclick="goHome()">Return</button>
   <canvas id="riveCanvas"></canvas>
+  <div class="hint">Tip: open DevTools (F12) → Console for helpful logs.</div>
 
   <script>
-    // IMPORTANT: Update to match your actual state machine name in Rive
-    const STATE_MACHINE = "SM_1";  
+    // ---- CONFIG: set ONE of these to match your Rive file ----
+    // If your file uses a state machine (recommended):
+    const STATE_MACHINE = "SM_1"; // e.g. "State Machine 1"
+    // If your file uses a timeline animation instead:
+    const ANIMATION = ""; // e.g. "Idle" or "Main"
+    // ----------------------------------------------------------
 
     const canvas = document.getElementById("riveCanvas");
-    let riveInstance = null;
 
+    // Ensure crisp rendering on HiDPI screens.
     function resizeCanvas() {
       const dpr = window.devicePixelRatio || 1;
       const rect = canvas.getBoundingClientRect();
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-      if (riveInstance) {
-        riveInstance.resizeDrawingSurfaceToCanvas();
-      }
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(rect.height * dpr);
     }
-
-    function loadRive() {
-      try {
-        riveInstance = new rive.Rive({
-          src: "./game1.riv",
-          canvas: canvas,
-          autoplay: false,
-          stateMachines: [STATE_MACHINE],
-          fit: rive.Fit.CONTAIN,
-          alignment: rive.Alignment.CENTER,
-          onLoad: () => {
-            console.log("✅ Rive file loaded successfully");
-            resizeCanvas();
-            // Play after first tap/click (fixes Safari autoplay issue)
-            document.addEventListener("click", () => riveInstance.play(), { once: true });
-          },
-          onError: (err) => {
-            console.error("❌ Rive load error:", err);
-            alert("Error loading Rive file. Check console for details.");
-          }
-        });
-      } catch (e) {
-        console.error("❌ JS error during Rive init:", e);
-        alert("Error initializing Rive: " + e.message);
-      }
-    }
-
-    window.addEventListener("load", () => {
-      resizeCanvas();
-      loadRive();
-    });
-
+    resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
 
-    function goHome() {
-      console.log("Going back to index.html");
-      window.location.href = "./index.html";
+    // Safety check: running from file:// often blocks fetch
+    if (location.protocol === "file:") {
+      console.warn(
+        "You're opening this over file://. Start a local server, e.g.:\n" +
+        "python3 -m http.server 8080  (then visit http://localhost:8080/)"
+      );
+    }
+
+    // Create and load the Rive file
+    try {
+      const r = new rive.Rive({
+        src: "game1.riv",
+        canvas,
+        autoplay: true,
+        // Provide exactly one of these depending on how your file is authored:
+        stateMachines: STATE_MACHINE ? [STATE_MACHINE] : [],
+        animations: (!STATE_MACHINE && ANIMATION) ? [ANIMATION] : [],
+        fit: rive.Fit.CONTAIN,
+        alignment: rive.Alignment.CENTER,
+
+        onLoad: () => {
+          console.log("Rive file loaded.");
+          // If nothing is configured above, try to play the first animation
+          // (This is a best-effort fallback and may not work for all files.)
+          try {
+            if (!STATE_MACHINE && !ANIMATION) {
+              console.log("No state machine/animation specified; attempting fallback playback.");
+              // Some versions expose play() without args to resume default;
+              // If your file has no default, set STATE_MACHINE or ANIMATION above.
+              r.play();
+            }
+          } catch (e) {
+            console.warn("Fallback play() failed. Set STATE_MACHINE or ANIMATION.", e);
+          }
+        },
+
+        onPlay: () => console.log("Playing…"),
+        onPause: () => console.log("Paused."),
+        onStop: () => console.log("Stopped."),
+        onError: (err) => console.error("Rive error:", err),
+      });
+    } catch (e) {
+      console.error("Failed to initialize Rive:", e);
     }
   </script>
 </body>
