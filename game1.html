@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Game 1 - Responsive Rive</title>
 
+  <!-- Rive Web Player -->
   <script src="https://unpkg.com/@rive-app/canvas@2.17.3"></script>
 
   <style>
@@ -28,7 +29,7 @@
       position: fixed;
       top: 20px;
       left: 20px;
-      background: rgba(255,255,255,0.8);
+      background: rgba(255, 255, 255, 0.8);
       border: none;
       border-radius: 8px;
       padding: 10px 16px;
@@ -50,45 +51,58 @@
   <canvas id="riveCanvas"></canvas>
 
   <script>
-    const STATE_MACHINE = "SM_1"; // must match your Rive file exactly
+    // IMPORTANT: Update to match your actual state machine name in Rive
+    const STATE_MACHINE = "SM_1";  
+
     const canvas = document.getElementById("riveCanvas");
-    let riveInstance;
+    let riveInstance = null;
 
     function resizeCanvas() {
       const dpr = window.devicePixelRatio || 1;
       const rect = canvas.getBoundingClientRect();
       canvas.width = rect.width * dpr;
       canvas.height = rect.height * dpr;
-      if (riveInstance) riveInstance.resizeDrawingSurfaceToCanvas();
+      if (riveInstance) {
+        riveInstance.resizeDrawingSurfaceToCanvas();
+      }
     }
 
     function loadRive() {
-      riveInstance = new rive.Rive({
-        src: "./game1.riv",
-        canvas: canvas,
-        autoplay: false,
-        stateMachines: [STATE_MACHINE],
-        fit: rive.Fit.CONTAIN,
-        alignment: rive.Alignment.CENTER,
-        onLoad: () => {
-          console.log("Rive file loaded successfully.");
-          resizeCanvas();
-          // Start on user interaction (fixes Safari)
-          document.addEventListener("click", () => riveInstance.play(), { once: true });
-        },
-        onError: (e) => console.error("Rive error:", e),
-      });
+      try {
+        riveInstance = new rive.Rive({
+          src: "./game1.riv",
+          canvas: canvas,
+          autoplay: false,
+          stateMachines: [STATE_MACHINE],
+          fit: rive.Fit.CONTAIN,
+          alignment: rive.Alignment.CENTER,
+          onLoad: () => {
+            console.log("✅ Rive file loaded successfully");
+            resizeCanvas();
+            // Play after first tap/click (fixes Safari autoplay issue)
+            document.addEventListener("click", () => riveInstance.play(), { once: true });
+          },
+          onError: (err) => {
+            console.error("❌ Rive load error:", err);
+            alert("Error loading Rive file. Check console for details.");
+          }
+        });
+      } catch (e) {
+        console.error("❌ JS error during Rive init:", e);
+        alert("Error initializing Rive: " + e.message);
+      }
     }
 
     window.addEventListener("load", () => {
-      loadRive();
       resizeCanvas();
+      loadRive();
     });
 
     window.addEventListener("resize", resizeCanvas);
 
     function goHome() {
-      window.location.href = "index.html";
+      console.log("Going back to index.html");
+      window.location.href = "./index.html";
     }
   </script>
 </body>
