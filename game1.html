@@ -54,7 +54,7 @@
   <canvas id="riveCanvas"></canvas>
 
   <script>
-    const STATE_MACHINE = SM_1; // Update this to match your Rive file
+    const STATE_MACHINE = "SM_1"; // Update this to match your Rive file
 
     const canvas = document.getElementById("riveCanvas");
     let riveInstance;
@@ -76,7 +76,7 @@
         src: "game1.riv",
         canvas: canvas,
         autoplay: true,
-        stateMachines: STATE_MACHINE,
+        stateMachines: SM_1,
         fit: rive.Fit.CONTAIN,
         alignment: rive.Alignment.CENTER,
         onLoad: () => {
