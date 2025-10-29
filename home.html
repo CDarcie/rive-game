@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Game Home</title>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* Full-screen background */
+    body {
+      background: url('home.jpg') no-repeat center center fixed;
+      background-size: cover;
+
+      display: flex;
+      justify-content: center;   /* horizontally center */
+      align-items: flex-start;   /* align items at the top */
+      padding-top: 50px;         /* space from the top edge */
+    }
+
+    /* Cow button */
+    .game-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      outline: none;
+      transition: transform 0.2s ease;
+    }
+
+    .game-button img {
+      width: 150px;  /* adjust size */
+      height: auto;
+      display: block;
+    }
+
+    .game-button:hover {
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+<body>
+  <!-- Button that opens the game -->
+  <button class="game-button" onclick="openGame()">
+    <img src="cow.png" alt="Play Game" />
+  </button>
+
+  <script>
+    function openGame() {
+      window.location.href = "game1.html";
+    }
+  </script>
+</body>
+</html>
