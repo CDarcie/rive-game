@@ -17,14 +17,12 @@
       overflow: hidden;
     }
 
-    /* Fullscreen canvas */
     canvas {
       display: block;
       width: 100vw;
       height: 100vh;
     }
 
-    /* Return (Home) button */
     .return-button {
       position: fixed;
       top: 20px;
@@ -47,36 +45,28 @@
   </style>
 </head>
 <body>
-  <!-- Return button -->
   <button class="return-button" onclick="goHome()">Return</button>
-
-  <!-- Rive canvas -->
   <canvas id="riveCanvas"></canvas>
 
   <script>
     const STATE_MACHINE = "SM_1"; // Update this to match your Rive file
-
     const canvas = document.getElementById("riveCanvas");
     let riveInstance;
 
-    // Dynamically resize the canvas for responsiveness
     function resizeCanvas() {
       const dpr = window.devicePixelRatio || 1;
       const rect = canvas.getBoundingClientRect();
       canvas.width = rect.width * dpr;
       canvas.height = rect.height * dpr;
-      if (riveInstance) {
-        riveInstance.resizeDrawingSurfaceToCanvas();
-      }
+      if (riveInstance) riveInstance.resizeDrawingSurfaceToCanvas();
     }
 
-    // Initialize and load the Rive animation
     function loadRive() {
       riveInstance = new rive.Rive({
         src: "game1.riv",
         canvas: canvas,
         autoplay: true,
-        stateMachines: SM_1,
+        stateMachines: [STATE_MACHINE],  // <-- fixed
         fit: rive.Fit.CONTAIN,
         alignment: rive.Alignment.CENTER,
         onLoad: () => {
@@ -87,19 +77,15 @@
       });
     }
 
-    // Initialize on page load
     window.addEventListener("load", () => {
       loadRive();
       resizeCanvas();
     });
 
-    // Handle window resizing
     window.addEventListener("resize", resizeCanvas);
 
-    // Return button action
-function goHome() {
-  window.location.href = "index.html";
-}
+    function goHome() {
+      window.location.href = "index.html";
     }
   </script>
 </body>
