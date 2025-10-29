@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Game 1 - Responsive Rive</title>
+
+  <!-- Rive Web Player -->
+  <script src="https://unpkg.com/@rive-app/canvas@2.17.3"></script>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #000;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Fullscreen canvas */
+    canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+      position: absolute;
+      z-index: 1;  
+    }
+
+    /* Return (Home) button */
+    .return-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.8);
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+      z-index: 10;
+    }
+
+    .return-button:hover {
+      background: white;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <!-- Return button -->
+  <button class="return-button" onclick="goHome()">Return</button>
+
+  <!-- Rive canvas -->
+  <canvas id="riveCanvas"></canvas>
+
+  <script>
+    const STATE_MACHINE = "State Machine 1"; // Update this to match your Rive file
+
+    const canvas = document.getElementById("riveCanvas");
+    let riveInstance;
+
+    // Dynamically resize the canvas for responsiveness
+    function resizeCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      if (riveInstance) {
+        riveInstance.resizeDrawingSurfaceToCanvas();
+      }
+    }
+
+    // Initialize and load the Rive animation
+    function loadRive() {
+      riveInstance = new rive.Rive({
+        src: "game3.riv",
+        canvas: canvas,
+        autoplay: true,
+        stateMachines: [STATE_MACHINE],
+        fit: rive.Fit.CONTAIN,
+        alignment: rive.Alignment.CENTER,
+        onLoad: () => {
+          console.log("Rive file loaded successfully.");
+          resizeCanvas();
+        },
+        onError: (e) => console.error("Rive error:", e),
+      });
+    }
+
+    // Initialize on page load
+    window.addEventListener("load", () => {
+      loadRive();
+      resizeCanvas();
+    });
+
+    // Handle window resizing
+    window.addEventListener("resize", resizeCanvas);
+
+    // Return button action
+    function goHome() {
+      window.location.href = "/rive-game/";
+    }
+  </script>
+</body>
+</html>
