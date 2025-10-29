@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Game 1 - Responsive Rive</title>
 
-  <!-- Rive Web Player -->
   <script src="https://unpkg.com/@rive-app/canvas@2.17.3"></script>
 
   <style>
@@ -21,13 +20,15 @@
       display: block;
       width: 100vw;
       height: 100vh;
+      position: relative;
+      z-index: 1;
     }
 
     .return-button {
       position: fixed;
       top: 20px;
       left: 20px;
-      background: rgba(255, 255, 255, 0.8);
+      background: rgba(255,255,255,0.8);
       border: none;
       border-radius: 8px;
       padding: 10px 16px;
@@ -49,7 +50,7 @@
   <canvas id="riveCanvas"></canvas>
 
   <script>
-    const STATE_MACHINE = "SM_1"; // Update this to match your Rive file
+    const STATE_MACHINE = "SM_1"; // must match your Rive file exactly
     const canvas = document.getElementById("riveCanvas");
     let riveInstance;
 
@@ -63,15 +64,17 @@
 
     function loadRive() {
       riveInstance = new rive.Rive({
-        src: "game1.riv",
+        src: "./game1.riv",
         canvas: canvas,
-        autoplay: true,
-        stateMachines: [STATE_MACHINE],  // <-- fixed
+        autoplay: false,
+        stateMachines: [STATE_MACHINE],
         fit: rive.Fit.CONTAIN,
         alignment: rive.Alignment.CENTER,
         onLoad: () => {
           console.log("Rive file loaded successfully.");
           resizeCanvas();
+          // Start on user interaction (fixes Safari)
+          document.addEventListener("click", () => riveInstance.play(), { once: true });
         },
         onError: (e) => console.error("Rive error:", e),
       });
