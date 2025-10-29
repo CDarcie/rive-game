@@ -19,9 +19,9 @@
       background-size: cover;
       display: flex;
       justify-content: center;    /* center horizontally */
-      align-items: flex-start;    /* align near top */
-      padding-top: 60px;          /* spacing from top */
-      gap: 60px;                  /* space between buttons */
+      align-items: flex-start;    /* near top */
+      padding-top: 60px;          /* space from top */
+      gap: 60px;                  /* space between icons */
     }
 
     /* Shared button style */
@@ -46,6 +46,11 @@
 </head>
 <body>
 
+  <!-- Button for Game 3 -->
+  <button class="game-button" onclick="openGame('game3.html')">
+    <img src="mario.png" alt="Play Game 3" />
+  </button>
+
   <!-- Button for Game 1 -->
   <button class="game-button" onclick="openGame('game1.html')">
     <img src="cow.png" alt="Play Game 1" />
@@ -53,7 +58,7 @@
 
   <!-- Button for Game 2 -->
   <button class="game-button" onclick="openGame('game2.html')">
-    <img src="graph.png" alt="Play Game 2" />
+    <img src="chicken.png" alt="Play Game 2" />
   </button>
 
   <script>
