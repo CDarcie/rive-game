@@ -17,18 +17,19 @@
       overflow: hidden;
     }
 
+    /* Fullscreen canvas */
     canvas {
       display: block;
       width: 100vw;
       height: 100vh;
     }
 
-    /* Return button styling */
+    /* Return (Home) button */
     .return-button {
       position: fixed;
       top: 20px;
       left: 20px;
-      background: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.8);
       border: none;
       border-radius: 8px;
       padding: 10px 16px;
@@ -46,20 +47,19 @@
   </style>
 </head>
 <body>
-  <!-- Return to home button -->
+  <!-- Return button -->
   <button class="return-button" onclick="goHome()">Return</button>
 
-  <!-- Rive animation -->
+  <!-- Rive canvas -->
   <canvas id="riveCanvas"></canvas>
 
   <script>
-    // Change this to your State Machine name
-    const STATE_MACHINE = "SM_1";
+    const STATE_MACHINE = "SM_1"; // Update this to match your Rive file
 
     const canvas = document.getElementById("riveCanvas");
     let riveInstance;
 
-    // Responsive resizing
+    // Dynamically resize the canvas for responsiveness
     function resizeCanvas() {
       const dpr = window.devicePixelRatio || 1;
       const rect = canvas.getBoundingClientRect();
@@ -70,25 +70,33 @@
       }
     }
 
-    // Load Rive file
-    riveInstance = new rive.Rive({
-      src: "game1.riv",
-      canvas: canvas,
-      autoplay: true,
-      stateMachines: [STATE_MACHINE],
-      fit: rive.Fit.CONTAIN,
-      alignment: rive.Alignment.CENTER,
-      onLoad: () => {
-        console.log("Rive file loaded successfully.");
-        resizeCanvas();
-      },
-      onError: (e) => console.error("Rive error:", e),
+    // Initialize and load the Rive animation
+    function loadRive() {
+      riveInstance = new rive.Rive({
+        src: "game1.riv",
+        canvas: canvas,
+        autoplay: true,
+        stateMachines: [STATE_MACHINE],
+        fit: rive.Fit.CONTAIN,
+        alignment: rive.Alignment.CENTER,
+        onLoad: () => {
+          console.log("Rive file loaded successfully.");
+          resizeCanvas();
+        },
+        onError: (e) => console.error("Rive error:", e),
+      });
+    }
+
+    // Initialize on page load
+    window.addEventListener("load", () => {
+      loadRive();
+      resizeCanvas();
     });
 
-    // Keep responsive
+    // Handle window resizing
     window.addEventListener("resize", resizeCanvas);
 
-    // Function for return button
+    // Return button action
     function goHome() {
       window.location.href = "home.html";
     }
