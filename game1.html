@@ -22,19 +22,44 @@
       width: 100vw;
       height: 100vh;
     }
+
+    /* Return button styling */
+    .return-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.85);
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+      z-index: 10;
+    }
+
+    .return-button:hover {
+      background: white;
+      transform: scale(1.05);
+    }
   </style>
 </head>
 <body>
+  <!-- Return to home button -->
+  <button class="return-button" onclick="goHome()">Return</button>
+
+  <!-- Rive animation -->
   <canvas id="riveCanvas"></canvas>
 
   <script>
-    // ✅ CHANGE THIS to match your Rive file's state machine name
-    const STATE_MACHINE = "SM_1"; 
+    // Change this to your State Machine name
+    const STATE_MACHINE = "SM_1";
 
     const canvas = document.getElementById("riveCanvas");
     let riveInstance;
 
-    // Dynamically resize the canvas for responsiveness
+    // Responsive resizing
     function resizeCanvas() {
       const dpr = window.devicePixelRatio || 1;
       const rect = canvas.getBoundingClientRect();
@@ -45,23 +70,28 @@
       }
     }
 
-    // Load the Rive file
+    // Load Rive file
     riveInstance = new rive.Rive({
       src: "game1.riv",
       canvas: canvas,
       autoplay: true,
-      stateMachines: [STATE_MACHINE], // <- Use your state machine name here
+      stateMachines: [STATE_MACHINE],
       fit: rive.Fit.CONTAIN,
       alignment: rive.Alignment.CENTER,
       onLoad: () => {
-        console.log(`Rive file loaded with State Machine: ${STATE_MACHINE}`);
-        resizeCanvas(); // Ensure correct scaling at start
+        console.log("Rive file loaded successfully.");
+        resizeCanvas();
       },
       onError: (e) => console.error("Rive error:", e),
     });
 
-    // Recalculate on window resize
+    // Keep responsive
     window.addEventListener("resize", resizeCanvas);
+
+    // Function for return button
+    function goHome() {
+      window.location.href = "home.html";
+    }
   </script>
 </body>
 </html>
