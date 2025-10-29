@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Game 1 - Mobile Rive</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Game 1 - Responsive Rive</title>
 
-  <!-- Official Rive Canvas runtime -->
+  <!-- Rive Web Player -->
   <script src="https://unpkg.com/@rive-app/canvas@2.17.3"></script>
 
   <style>
@@ -17,17 +17,19 @@
       overflow: hidden;
     }
 
+    /* Fullscreen canvas */
     canvas {
       display: block;
       width: 100vw;
       height: 100vh;
     }
 
+    /* Return (Home) button */
     .return-button {
       position: fixed;
       top: 20px;
       left: 20px;
-      background: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.8);
       border: none;
       border-radius: 8px;
       padding: 10px 16px;
@@ -42,74 +44,62 @@
       background: white;
       transform: scale(1.05);
     }
-
-    /* Optional: show a simple loading overlay */
-    .loading {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      background: rgba(0, 0, 0, 0.8);
-      font-family: Arial, sans-serif;
-      z-index: 5;
-    }
   </style>
 </head>
 <body>
+  <!-- Return button -->
   <button class="return-button" onclick="goHome()">Return</button>
-  <div id="loading" class="loading">Loading game...</div>
+
+  <!-- Rive canvas -->
   <canvas id="riveCanvas"></canvas>
 
   <script>
-    const STATE_MACHINE = "State Machine 1"; // ← update if needed
+    const STATE_MACHINE = "State Machine 1"; // Update this to match your Rive file
 
     const canvas = document.getElementById("riveCanvas");
-    const loadingOverlay = document.getElementById("loading");
-    let riveInstance = null;
+    let riveInstance;
 
-    // Resize handling for all devices
+    // Dynamically resize the canvas for responsiveness
     function resizeCanvas() {
       const dpr = window.devicePixelRatio || 1;
       const rect = canvas.getBoundingClientRect();
       canvas.width = rect.width * dpr;
       canvas.height = rect.height * dpr;
-      if (riveInstance) riveInstance.resizeDrawingSurfaceToCanvas();
+      if (riveInstance) {
+        riveInstance.resizeDrawingSurfaceToCanvas();
+      }
     }
 
-    // Load Rive only after a user tap (required by iOS)
-    function initializeRive() {
-      if (riveInstance) return; // prevent double init
-
-      loadingOverlay.textContent = "Loading Rive file...";
-
+    // Initialize and load the Rive animation
+    function loadRive() {
       riveInstance = new rive.Rive({
         src: "game1.riv",
         canvas: canvas,
-        autoplay: false, // will start after user tap
+        autoplay: true,
         stateMachines: [STATE_MACHINE],
         fit: rive.Fit.CONTAIN,
         alignment: rive.Alignment.CENTER,
         onLoad: () => {
-          console.log("Rive loaded successfully");
-          loadingOverlay.style.display = "none";
+          console.log("Rive file loaded successfully.");
           resizeCanvas();
-          riveInstance.play(); // now safe to play
         },
-        onError: (err) => {
-          console.error("Rive error:", err);
-          loadingOverlay.textContent = "Error loading Rive file.";
-        }
+        onError: (e) => console.error("Rive error:", e),
       });
     }
 
-    // Trigger initialization after first user interaction
-    document.addEventListener("touchstart", initializeRive, { once: true });
-    document.addEventListener("click", initializeRive, { once: true });
+    // Initialize on page load
+    window.addEventListener("load", () => {
+      loadRive();
+      resizeCanvas();
+    });
 
+    // Handle window resizing
     window.addEventListener("resize", resizeCanvas);
-   
+
+    // Return button action
+    function goHome() {
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>
